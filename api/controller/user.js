@@ -1,10 +1,15 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { validation_signup, validation_signin } = require('../utils/validation');
 
 const User = require("../model/user");
 
 module.exports.user_signup = async (req, res, next) => {
+  const { error } = validation_signup(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message});
+  }
   const checkEmail = await User.findOne({ email: req.body.email });
   if (checkEmail) {
     return res.status(409).json({ message: "Email already in used" });
@@ -41,6 +46,10 @@ module.exports.user_signup = async (req, res, next) => {
 };
 
 module.exports.user_signin = async (req, res, next) => {
+  const { error } = validation_signin(req.body);
+  if (error) {
+    return res.status(400).json({message: error.details[0].message});
+  }
   const account = await User.findOne({ email: req.body.email });
   if (!account) {
     return res.status(401).json({ message: "Email not found" });
