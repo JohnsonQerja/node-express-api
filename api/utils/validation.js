@@ -13,6 +13,7 @@ module.exports.validation_signup = (data) => {
 module.exports.validation_signin = (data) => {
   const schema = joi.object({
     email: joi.string().email().required(),
+    password: joi.string(),
   });
 
   return schema.validate(data);
