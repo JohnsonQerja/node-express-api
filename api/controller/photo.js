@@ -23,8 +23,9 @@ module.exports.photo_get_one = async (req, res, next) => {
     return res.status(400).json({message: 'Photo ID not valid'});
   }
   await Photo.findById(id)
-    .select('_id imageUrl caption user')
+    .select('_id imageUrl caption user likes')
     .populate('user', '_id name email')
+    .populate({path: 'likes', select: '_id user'})
     .then((response) => {
       if (!response) {
         return res.status(404).json({message: `Photo with id: ${id} not found!`});
@@ -43,7 +44,8 @@ module.exports.photo_get_by_user = async (req, res, next) => {
   }
   await Photo.find({user: userId})
     .sort({created_at: 'desc'})
-    .select('_id imageUrl caption')
+    .select('_id imageUrl caption likes')
+    .populate({path: 'likes', select: '_id user'})
     .then((response) => {
       if (!response) {
         return res.status(404).json({message: `User with id: ${userId} not found!`});
@@ -56,7 +58,7 @@ module.exports.photo_get_by_user = async (req, res, next) => {
 };
 
 module.exports.photo_create = async (req, res, next) => {
-  const userId = req.body.user;
+  const userId = req.user._id;
   if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
     return res.status(400).json({message: 'User Id not valid'});
   }
@@ -68,7 +70,7 @@ module.exports.photo_create = async (req, res, next) => {
     _id: new mongoose.Types.ObjectId(),
     imageUrl: req.body.imageUrl,
     caption: req.body.caption,
-    user: req.body.user,
+    user: req.user._id,
   });
   await photo
     .save()
