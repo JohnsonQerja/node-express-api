@@ -95,7 +95,7 @@ module.exports.photo_delete = async (req, res, next) => {
   if (!id.match(/^[0-9a-fA-F]{24}$/)) {
     return res.status(400).json({message: 'Photo ID not valid!'});
   }
-  const userId = req.body.user_id;
+  const userId = req.user._id;
   if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
     return res.status(401).json({message: 'User ID not valid'});
   }
@@ -108,7 +108,7 @@ module.exports.photo_delete = async (req, res, next) => {
       if (response.deletedCount < 1) {
         res.status(404).json({message: `Photo with id: ${id} not found!`});
       }
-      res.status(200).json({message: 'Photo delete successfully'});
+      res.status(200).json({status: 200, message: 'Photo delete successfully'});
     })
     .catch((error) => {
       res.status(400).json({message: error.message});
