@@ -67,7 +67,7 @@ module.exports.like_remove = async (req, res, next) => {
   }
   const likeData = await Like.findById({_id: likeId});
   if (!likeData) {
-    return res.status(404).json({message: `Like with id: ${id} not found`});
+    return res.status(404).json({message: `Like with id: ${likeData} not found`});
   }
   const matchOwner = await Like.findOne({_id: likeId, user: req.user._id});
   if (!matchOwner) {
