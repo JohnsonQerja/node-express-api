@@ -58,7 +58,7 @@ module.exports.user_signin = async (req, res, next) => {
     if (err) return res.status(401).json({ message: "Auth failed" });
     if (!result) res.status(401).json({ message: "Invalid password" });
   });
-  const token = jwt.sign({ _id: account._id }, process.env.SECRET_TOKEN, { expiresIn: "1h" });
+  const token = jwt.sign({ _id: account._id }, process.env.SECRET_TOKEN, { expiresIn: "24h" });
   res
     .status(200)
     .header("Authorization")
