@@ -14,4 +14,6 @@ route.post('/', verifyToken, PhotoController.photo_create);
 
 route.delete('/:id', verifyToken, PhotoController.photo_delete);
 
+route.patch('/:id', verifyToken, PhotoController.photo_patch);
+
 module.exports = route;

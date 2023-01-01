@@ -114,3 +114,14 @@ module.exports.photo_delete = async (req, res, next) => {
       res.status(400).json({message: error.message});
     })
 };
+
+module.exports.photo_patch = async (req, res, next) => {
+  const updates = req.body;
+  await Photo.updateOne({_id: req.params.id}, {$set: updates})
+    .then(response => {
+      res.status(200).json({status: 200, message: 'Photo update successfully'});
+    })
+    .catch(error => {
+      res.status(400).json({message: error.message});
+    })
+};
