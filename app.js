@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 const userRoute = require('./api/routes/user');
 const photoRoute = require('./api/routes/photo');
 const likeRoute = require('./api/routes/like');
+const commentRoute = require('./api/routes/comment');
 
 mongoose.set('strictQuery', true);
 mongoose.connect(process.env.DB_URL_DEV, { useNewUrlParser: true });
@@ -36,6 +37,7 @@ app.use((req, res, next) => {
 app.use('/user', userRoute);
 app.use('/photo', photoRoute);
 app.use('/like', likeRoute);
+app.use('/comment', commentRoute);
 
 app.use((req, res, next) => {
   const error = new Error('Not found');

@@ -1,0 +1,67 @@
+const express = require('express');
+const route = express.Router();
+const mongoose = require('mongoose');
+const verifyToken = require('../middleware/verify-token');
+
+const Comment = require('../model/comment');
+const Photo = require('../model/photo');
+const User = require('../model/user');
+
+route.post('/', verifyToken, async (req, res) => {
+  const photoId = req.body.photo_id;
+  if (!photoId.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(400).json({message: 'Photo Id not valid'});
+  }
+  const findPhoto = await Photo.findById(photoId);
+  if (!findPhoto) {
+    res.status(404).json({message: `Photo with id: ${photoId} not found!`});
+  }
+  const userId = req.user._id;
+  const findUser = await User.findById(userId);
+  if (!findUser) {
+    res.status(404).json({message: `User with id: ${userId} not found!`});
+  }
+  const comment = new Comment({
+    _id: new mongoose.Types.ObjectId(),
+    message: req.body.message,
+    photo: photoId,
+    user: userId,
+  });
+  await comment
+    .save()
+    .then(response => {
+      res.status(201).json({
+        status: 201,
+        data: {
+          _id: response._id,
+          message: response.message,
+          photo: response.photo,
+          user: {
+            _id: findUser._id,
+            name: findUser.name,
+          },
+        },
+      })
+    })
+    .catch(error => {
+      res.status(400).json({message: error.message});
+    });
+});
+
+route.get('/:photoId', async (req, res) => {
+  const photoId = req.params.photoId;
+  if (!photoId.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(400).json({message: 'Photo ID not valid'});
+  }
+  await Comment.find({photo: photoId})
+    .select('_id message reply photo user')
+    .populate('user', '_id name')
+    .then(response => {
+      res.status(200).json({data: response});
+    })
+    .catch(error => {
+      res.status(500).json({message: error.message});
+    })
+});
+
+module.exports = route;
