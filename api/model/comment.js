@@ -6,13 +6,14 @@ const CommentSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  reply: [
-    {type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}
-  ],
+  reply: Array,
+  thread: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment',
+  },
   photo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Photo',
-    required: true,
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,

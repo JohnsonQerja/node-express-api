@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { validation_photo } = require('../utils/validation');
 
 const Photo = require('../model/photo');
 const User = require('../model/user');
@@ -58,6 +59,10 @@ module.exports.photo_get_by_user = async (req, res, next) => {
 };
 
 module.exports.photo_create = async (req, res, next) => {
+  const { error } = validation_photo(req.body);
+  if (error) {
+    res.status(400).json({message: error.details[0].message});
+  }
   const userId = req.user._id;
   if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
     return res.status(400).json({message: 'User Id not valid'});
