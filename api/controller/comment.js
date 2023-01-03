@@ -37,6 +37,7 @@ module.exports.comment_post = async (req, res) => {
         data: {
           _id: response._id,
           message: response.message,
+          reply: [],
           photo: response.photo,
           user: {
             _id: findUser._id,
