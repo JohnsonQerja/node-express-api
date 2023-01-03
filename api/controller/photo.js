@@ -6,6 +6,8 @@ const User = require('../model/user');
 
 module.exports.photo_get_all = async (req, res, next) => {
   await Photo.find()
+    .skip(parseInt(req.query.index))
+    .limit(parseInt(req.query.limit))
     .sort({created_at: 'desc'})
     .select('_id imageUrl')
     .then((response) => {
@@ -61,7 +63,7 @@ module.exports.photo_get_by_user = async (req, res, next) => {
 module.exports.photo_create = async (req, res, next) => {
   const { error } = validation_photo(req.body);
   if (error) {
-    res.status(400).json({message: error.details[0].message});
+    return res.status(400).json({message: error.details[0].message});
   }
   const userId = req.user._id;
   if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
