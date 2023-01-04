@@ -5,14 +5,18 @@ const Photo = require('../model/photo');
 const User = require('../model/user');
 
 module.exports.photo_get_all = async (req, res, next) => {
+  const offset = parseInt(req.query.offset) || 0; 
+  const limit = parseInt(req.query.limit) || 12;
+  const data = await Photo.find();
   await Photo.find()
-    .skip(parseInt(req.query.index))
-    .limit(parseInt(req.query.limit))
+    .skip(offset)
+    .limit(limit)
     .sort({created_at: 'desc'})
-    .select('_id imageUrl')
+    .select('_id imageUrl caption')
     .then((response) => {
       res.status(200).json({
         data: response,
+        total: data.length,
       });
     })
     .catch((error) => {
@@ -45,7 +49,12 @@ module.exports.photo_get_by_user = async (req, res, next) => {
   if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
     return res.status(400).json({message: 'User ID not valid'});
   }
+  const offset = parseInt(req.query.offset) || 0;
+  const limit = parseInt(req.query.limit) || 3;
+  const data = await Photo.find({user: userId});
   await Photo.find({user: userId})
+    .skip(offset)
+    .limit(limit)
     .sort({created_at: 'desc'})
     .select('_id imageUrl caption likes')
     .populate({path: 'likes', select: '_id user'})
@@ -53,7 +62,10 @@ module.exports.photo_get_by_user = async (req, res, next) => {
       if (!response) {
         return res.status(404).json({message: `User with id: ${userId} not found!`});
       }
-      res.status(200).json({data: response});
+      res.status(200).json({
+        data: response,
+        total: data.length,
+      });
     })
     .catch((error) => {
       res.status(500).json({message: error.message});
