@@ -1,7 +1,15 @@
 const Photo = require('../../model/photo');
-
 const User = require('../../model/user');
 const Like = require('../../model/like');
+
+const photo = async photoId => {
+  try {
+    const photo = await Photo.findById(photoId.toString());
+    return photo;
+  } catch (error) {
+    throw error;
+  }
+}
 
 const user = async userId => {
   try {
@@ -17,7 +25,9 @@ const likes = async photoId => {
     const likes = await Like.find({photo: photoId});
     return likes.map(like => {
       return {
-        ...like._doc
+        ...like._doc,
+        photo: photo.bind(this, like._doc.photo),
+        user: user.bind(this, like._doc.user)
       }
     })
   } catch (error) {
