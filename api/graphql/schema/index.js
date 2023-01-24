@@ -13,6 +13,19 @@ module.exports = buildSchema(`
     email: String!
     token: String!
   }
+  type Photo {
+    _id: ID!
+    imageUrl: String!
+    caption: String!
+    user: User!
+    likes: [Like!]
+    created_at: String!
+  }
+  type Like {
+    _id: ID!
+    photo: Photo!
+    user: User!
+  }
   input UserInput {
     name: String!
     email: String!
@@ -20,6 +33,8 @@ module.exports = buildSchema(`
   }
   type RootQuery {
     signin(email: String!, password: String!): Auth!
+    photos: [Photo!]
+    userPhotos(userId: ID!): [Photo!]
   }
   type RootMutation {
     signup(userInput: UserInput): User
