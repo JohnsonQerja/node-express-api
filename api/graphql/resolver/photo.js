@@ -1,6 +1,12 @@
+const DataLoader = require('dataloader');
+
 const Photo = require('../../model/photo');
 const User = require('../../model/user');
 const Like = require('../../model/like');
+
+const likesLoader = new DataLoader(photosId => {
+  return likes(photosId);
+});
 
 const photo = async photoId => {
   try {
@@ -35,10 +41,19 @@ const likes = async photoId => {
   }
 }
 
+const transformPhoto = photo => {
+  return {
+    ...photo._doc,
+    user: user.bind(this, photo._doc.user),
+    likes: likes.bind(this, photo._doc._id),
+    created_at: new Date(photo._doc.created_at).toISOString()
+  }
+};
+
 module.exports = {
   photos: async () => {
     try {
-      const photos = await Photo.find();
+      const photos = await Photo.find().sort({created_at: 'desc'});
       return photos.map(photo => {
         return {
           ...photo._doc,
@@ -53,7 +68,7 @@ module.exports = {
   },
   userPhotos: async args => {
     try {
-      const photos = await Photo.find({user: args.userId});
+      const photos = await Photo.find({user: args.userId}).sort({created_at: 'desc'});
       return photos.map(photo => {
         return {
           ...photo._doc,
