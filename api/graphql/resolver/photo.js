@@ -127,5 +127,21 @@ module.exports = {
     } catch (error) {
       throw error;
     }
+  },
+  post: async args => {
+    try {
+      // find user by id
+      // ....
+      const post = new Photo({
+        imageUrl: args.postInput.imageUrl,
+        caption: args.postInput.caption,
+      });
+      // const result = await post.save();
+      // return {
+      //   ...result._doc,
+      // }
+    } catch (error) {
+      throw error;
+    }
   }
 }
