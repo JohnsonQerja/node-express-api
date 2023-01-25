@@ -35,6 +35,7 @@ module.exports = buildSchema(`
     signin(email: String!, password: String!): Auth!
     photos: [Photo!]
     userPhotos(userId: ID!): [Photo!]
+    photo(photoId: ID!): Photo!
   }
   type RootMutation {
     signup(userInput: UserInput): User

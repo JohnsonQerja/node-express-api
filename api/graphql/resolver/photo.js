@@ -119,5 +119,13 @@ module.exports = {
     } catch (error) {
       throw error;
     }
+  },
+  photo: async args => {
+    try {
+      const data = await Photo.findById(args.photoId);
+      return transformPhoto(data);
+    } catch (error) {
+      throw error;
+    }
   }
 }
