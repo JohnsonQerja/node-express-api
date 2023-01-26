@@ -2,7 +2,7 @@ const Like = require('../../model/like');
 const User = require('../../model/user');
 const Photo = require('../../model/photo');
 
-const { transformLike, transformPhoto } = require('./merge');
+const { transformLike } = require('./merge');
 
 module.exports = {
   like: async (args, req) => {

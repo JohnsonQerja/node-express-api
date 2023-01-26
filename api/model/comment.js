@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const CommentSchema = mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
+  // _id: mongoose.Schema.Types.ObjectId,
   message: {
     type: String,
     required: true,

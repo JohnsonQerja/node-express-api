@@ -26,6 +26,13 @@ module.exports = buildSchema(`
     photo: Photo!
     user: User!
   }
+  type Comment {
+    _id: ID!
+    message: String!
+    photo: Photo!
+    user: User!
+    reply: [Comment]
+  }
   input UserInput {
     name: String!
     email: String!
@@ -35,17 +42,28 @@ module.exports = buildSchema(`
     imageUrl: String!
     caption: String!
   }
+  input AddCommentInput {
+    message: String!
+    photoId: ID!
+  }
+  input ReplyCommentInput {
+    message: String!
+    threadId: ID!
+  }
   type RootQuery {
     signin(email: String!, password: String!): Auth!
     photos: [Photo!]
     userPhotos(userId: ID!): [Photo!]
     photo(photoId: ID!): Photo!
+    comments(photoId: ID!): [Comment]
   }
   type RootMutation {
     signup(userInput: UserInput): Auth!
     post(postInput: PostInput): Photo!
     like(photoId: ID!): Like!
     unlike(likeId: ID!): Like!
+    addComment(addCommentInput: AddCommentInput): Comment!
+    replyComment(replyCommentInput: ReplyCommentInput): Comment!
   }
   schema {
     query: RootQuery
