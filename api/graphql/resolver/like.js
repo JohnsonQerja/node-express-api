@@ -1,46 +1,48 @@
 const Like = require('../../model/like');
-const Photo = require('../../model/photo');
 const User = require('../../model/user');
+const Photo = require('../../model/photo');
 
-const photo = async photoId => {
-  console.log('query photo');
-  try {
-    const photo = await Photo.findById(photoId);
-    return {
-      ...photo._doc,
-    }
-  } catch (error) {
-    throw error;
-  }
-};
-
-const user = async userId => {
-  console.log('query user');
-  try {
-    const user = await User.findById(userId);
-    return {
-      ...user._doc,
-    }
-  } catch (error) {
-    throw error;
-  }
-}
-
-const transformLike = like => {
-  return {
-    ...like._doc,
-    photo: photo.bind(this, like.photo),
-    user: user.bind(this, like.user),
-  }
-}
+const { transformLike, transformPhoto } = require('./merge');
 
 module.exports = {
-  likes: async args => {
+  like: async (args, req) => {
+    if (!req.user) {
+      throw new Error('Unauthorize user!');
+    }
     try {
-      const likes = await Like.find({photo: args.photoId});
-      return likes.map(like => {
-        return transformLike(like);
-      })
+      const findUser = await User.findById(req.user.id);
+      if (!findUser) {
+        throw new Error('User not found!');
+      }
+      const findPhoto = await Photo.findById(args.photoId);
+      if (!findPhoto) {
+        throw new Error('Photo not found!');
+      }
+      const like = new Like({
+        photo: findPhoto._doc._id,
+        user: findUser._doc._id
+      });
+      const result = await like.save();
+      return transformLike(result);
+    } catch (error) {
+      throw error;
+    }
+  },
+  unlike: async (args, req) => {
+    if (!req.user) {
+      throw new Error('Unauthorize user!');
+    }
+    try {
+      const findUser = await User.findById(req.user.id);
+      if (!findUser) {
+        throw new Error('User not found!');
+      }
+      const findLike = await Like.findById(args.likeId);
+      if (!findLike) {
+        throw new Error('like data not found!');
+      }
+      await Like.deleteOne({_id: findLike._doc._id});
+      return transformLike(findLike);
     } catch (error) {
       throw error;
     }

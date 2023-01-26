@@ -40,11 +40,12 @@ module.exports = buildSchema(`
     photos: [Photo!]
     userPhotos(userId: ID!): [Photo!]
     photo(photoId: ID!): Photo!
-    likes(photoId: ID!): [Like]
   }
   type RootMutation {
-    signup(userInput: UserInput): User
+    signup(userInput: UserInput): Auth!
     post(postInput: PostInput): Photo!
+    like(photoId: ID!): Like!
+    unlike(likeId: ID!): Like!
   }
   schema {
     query: RootQuery
