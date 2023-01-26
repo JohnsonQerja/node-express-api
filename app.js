@@ -5,7 +5,8 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const { graphqlHTTP } = require('express-graphql');
-const { buildSchema } = require('graphql');
+
+const verifyAuth = require('./api/middleware/verify-token');
 
 const graphqlSchema = require('./api/graphql/schema');
 const graphqlResolver = require('./api/graphql/resolver');
@@ -33,6 +34,8 @@ app.use((req, res, next) => {
 
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
+
+app.use(verifyAuth);
 
 app.use('/graphql', graphqlHTTP({
   schema: graphqlSchema,

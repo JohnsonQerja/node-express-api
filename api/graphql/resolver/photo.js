@@ -128,18 +128,25 @@ module.exports = {
       throw error;
     }
   },
-  post: async args => {
+  post: async (args, req) => {
+    if (!req.user) {
+      throw new Error('Unauthorize user!');
+    }
     try {
-      // find user by id
-      // ....
+      const findUser = await User.findById(req.user.id);
+      if (!findUser) {
+        throw new Error('User not found!')
+      }
+      console.log(findUser);
       const post = new Photo({
         imageUrl: args.postInput.imageUrl,
         caption: args.postInput.caption,
+        user: findUser._doc._id,
       });
-      // const result = await post.save();
-      // return {
-      //   ...result._doc,
-      // }
+      const result = await post.save();
+      return {
+        ...result._doc,
+      }
     } catch (error) {
       throw error;
     }
