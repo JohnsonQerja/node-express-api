@@ -16,7 +16,7 @@ const photosLoader = new DataLoader((photsId) => {
 
 const likesLoader = new DataLoader((photosId) => {
   return likes(photosId);
-})
+});
 
 const user = async userId => {
   try {

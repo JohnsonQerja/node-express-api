@@ -22,7 +22,18 @@ module.exports = {
         photo: findPhoto._doc._id,
         user: findUser._doc._id
       });
-      const result = await like.save();
+      const result = await like.save().then(async (response) => {
+        await Photo.findOneAndUpdate(
+          {_id: findPhoto._doc._id},
+          {
+            $push: {
+              likes: response._doc._id
+            }
+          },
+          {upsert: true}
+        );
+        return response;
+      });
       return transformLike(result);
     } catch (error) {
       throw error;
@@ -41,7 +52,17 @@ module.exports = {
       if (!findLike) {
         throw new Error('like data not found!');
       }
-      await Like.deleteOne({_id: findLike._doc._id});
+      await Like.deleteOne({_id: findLike._doc._id})
+        .then(async () => {
+          await Photo.findOneAndUpdate(
+            {_id: findLike._doc.photo},
+            {
+              $pullAll: {
+                likes: [args.likeId]
+              }
+            }
+          );
+        });
       return transformLike(findLike);
     } catch (error) {
       throw error;
