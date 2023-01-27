@@ -67,9 +67,9 @@ const photos = async photosId => {
 const likes = async likesId => {
   try {
     const likes = await Like.find({_id: { $in: likesId }});
-    return likes.map(like => {
+    return map(like => {
       return transformLike(like);
-    });
+    }, likes);
   } catch (error) {
     throw error;
   }
@@ -115,8 +115,8 @@ const transformLike = like => {
 const transformComment = comment => {
   return {
     ...comment._doc,
-    photo: photo.bind(this, comment._doc.photo),
-    user: user.bind(this, comment._doc.user),
+    photo: photosLoader.load(comment._doc.photo.toString()),
+    user: usersLoader.load(comment._doc.user.toString()),
     reply: () => commentsLoader.loadMany(comment._doc.reply)
   }
 }
