@@ -29,6 +29,7 @@ module.exports = buildSchema(`
   }
   type Comment {
     _id: ID!
+    message: String!
     photo: Photo!
     user: User!
     reply: [Comment!]

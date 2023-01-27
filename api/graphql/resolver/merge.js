@@ -5,7 +5,6 @@ const User = require('../../model/user');
 const Photo = require('../../model/photo');
 const Like = require('../../model/like');
 const Comment = require('../../model/comment');
-const like = require('./like');
 
 const usersLoader = new DataLoader((usersId) => {
   return users(usersId);
@@ -20,11 +19,11 @@ const likesLoader = new DataLoader((likesId) => {
 });
 
 const commentsLoader = new DataLoader((threadsId) => {
-  console.log(threadsId);
   return comments(threadsId);
 })
 
 const user = async userId => {
+  console.log('query user');
   try {
     const user = await User.findById(userId);
     return transformUser(user);
@@ -45,6 +44,7 @@ const users = async usersId => {
 }
 
 const photo = async photoId => {
+  console.log('query photo');
   try {
     const photo = await Photo.findById(photoId);
     return transformPhoto(photo);
@@ -76,14 +76,10 @@ const likes = async likesId => {
 }
 
 const comments = async threadsId => {
-  // console.log(threadsId);
   try {
     const comments = await Comment.find({_id: { $in: threadsId }});
     return map(comment => {
-      // console.log(comment);
-      return {
-        ...comment._doc,
-      }
+      return transformComment(comment)
     }, comments);
   } catch (error) {
     throw error;
@@ -113,6 +109,15 @@ const transformLike = like => {
     ...like._doc,
     photo: photosLoader.load(like._doc.photo.toString()),
     user: usersLoader.load(like._doc.user.toString())
+  }
+}
+
+const transformComment = comment => {
+  return {
+    ...comment._doc,
+    photo: photo.bind(this, comment._doc.photo),
+    user: user.bind(this, comment._doc.user),
+    reply: () => commentsLoader.loadMany(comment._doc.reply)
   }
 }
 
