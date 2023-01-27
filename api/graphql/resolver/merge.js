@@ -5,6 +5,7 @@ const User = require('../../model/user');
 const Photo = require('../../model/photo');
 const Like = require('../../model/like');
 const Comment = require('../../model/comment');
+const like = require('./like');
 
 const usersLoader = new DataLoader((usersId) => {
   return users(usersId);
@@ -14,9 +15,14 @@ const photosLoader = new DataLoader((photsId) => {
   return photos(photsId);
 });
 
-const likesLoader = new DataLoader((photosId) => {
-  return likes(photosId);
+const likesLoader = new DataLoader((likesId) => {
+  return likes(likesId);
 });
+
+const commentsLoader = new DataLoader((threadsId) => {
+  console.log(threadsId);
+  return comments(threadsId);
+})
 
 const user = async userId => {
   try {
@@ -40,7 +46,6 @@ const users = async usersId => {
 
 const photo = async photoId => {
   try {
-    console.log('query photo');
     const photo = await Photo.findById(photoId);
     return transformPhoto(photo);
   } catch (error) {
@@ -59,22 +64,27 @@ const photos = async photosId => {
   }
 }
 
-const likes = async photosId => {
+const likes = async likesId => {
   try {
-    const likes = await Like.find({photo: { $in: photosId }});
-    const groupByPhotoId = groupBy(like => like.photo, likes);
-    return map(photoId => {
-      if (groupByPhotoId[photoId]) {
-        return map(like => {
-          return {
-            ...like,
-            _id: like.id,
-            photo: photosLoader.load(like.photo.toString()),
-            user: usersLoader.load(like.user.toString())
-          }
-        }, groupByPhotoId[photoId])
+    const likes = await Like.find({_id: { $in: likesId }});
+    return likes.map(like => {
+      return transformLike(like);
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+const comments = async threadsId => {
+  // console.log(threadsId);
+  try {
+    const comments = await Comment.find({_id: { $in: threadsId }});
+    return map(comment => {
+      // console.log(comment);
+      return {
+        ...comment._doc,
       }
-    } , photosId);
+    }, comments);
   } catch (error) {
     throw error;
   }
@@ -88,11 +98,12 @@ const transformUser = user => {
   }
 }
 
-const transformPhoto = photo => {
+const transformPhoto = async photo => {
   return {
     ...photo._doc,
     user: usersLoader.load(photo._doc.user.toString()),
-    likes: likesLoader.load(photo._doc._id.toString()),
+    likes: () => likesLoader.loadMany(photo._doc.likes),
+    comments: () => commentsLoader.loadMany(photo._doc.comments),
     created_at: new Date(photo._doc.created_at).toISOString()
   }
 }

@@ -19,12 +19,19 @@ module.exports = buildSchema(`
     caption: String!
     user: User!
     likes: [Like!]
+    comments: [Comment!]
     created_at: String!
   }
   type Like {
     _id: ID!
     photo: Photo!
     user: User!
+  }
+  type Comment {
+    _id: ID!
+    photo: Photo!
+    user: User!
+    reply: [Comment!]
   }
   input UserInput {
     name: String!
@@ -34,6 +41,10 @@ module.exports = buildSchema(`
   input PostInput {
     imageUrl: String!
     caption: String!
+  }
+  input CommentInput {
+    threadId: ID!
+    message: String!
   }
   type RootQuery {
     signin(email: String!, password: String!): Auth!
@@ -46,6 +57,8 @@ module.exports = buildSchema(`
     post(postInput: PostInput): Photo!
     like(photoId: ID!): Like!
     unlike(likeId: ID!): Like!
+    postComment(commentInput: CommentInput): Comment!
+    postReply(commentInput: CommentInput): Comment!
   }
   schema {
     query: RootQuery

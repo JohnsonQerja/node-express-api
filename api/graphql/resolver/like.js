@@ -2,7 +2,7 @@ const Like = require('../../model/like');
 const User = require('../../model/user');
 const Photo = require('../../model/photo');
 
-const { transformLike } = require('./merge');
+// const { transformLike } = require('./merge');
 
 module.exports = {
   like: async (args, req) => {
@@ -34,7 +34,9 @@ module.exports = {
         );
         return response;
       });
-      return transformLike(result);
+      return {
+        ...result._doc,
+      };
     } catch (error) {
       throw error;
     }
@@ -63,7 +65,9 @@ module.exports = {
             }
           );
         });
-      return transformLike(findLike);
+      return {
+        ...findLike._doc
+      };
     } catch (error) {
       throw error;
     }
