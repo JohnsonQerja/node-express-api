@@ -4,7 +4,10 @@ const likeSchema = mongoose.Schema({
   photo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Photo',
-    required: true,
+  },
+  comment: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment',
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,

@@ -24,7 +24,8 @@ module.exports = buildSchema(`
   }
   type Like {
     _id: ID!
-    photo: Photo!
+    photo: Photo
+    comment: Comment
     user: User!
   }
   type Comment {
@@ -33,6 +34,7 @@ module.exports = buildSchema(`
     photo: Photo!
     user: User!
     reply: [Comment!]
+    likes: [Like!]
   }
   input UserInput {
     name: String!
@@ -43,12 +45,17 @@ module.exports = buildSchema(`
     imageUrl: String!
     caption: String!
   }
+  input LikeInput {
+    itemId: ID!
+    type: String!
+  }
   input CommentInput {
     threadId: ID!
     message: String!
   }
   type RootQuery {
     signin(email: String!, password: String!): Auth!
+    profile(userId: ID!): User!
     photos: [Photo!]
     userPhotos(userId: ID!): [Photo!]
     photo(photoId: ID!): Photo!
@@ -56,8 +63,8 @@ module.exports = buildSchema(`
   type RootMutation {
     signup(userInput: UserInput): Auth!
     post(postInput: PostInput): Photo!
-    like(photoId: ID!): Like!
-    unlike(likeId: ID!): Like!
+    like(likeInput: LikeInput): Like!
+    dislike(likeInput: LikeInput): Like!
     postComment(commentInput: CommentInput): Comment!
     postReply(commentInput: CommentInput): Comment!
   }

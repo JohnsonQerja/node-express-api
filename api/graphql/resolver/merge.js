@@ -1,5 +1,5 @@
 const DataLoader = require('dataloader');
-const { groupBy, map } = require('ramda');
+const { map } = require('ramda');
 
 const User = require('../../model/user');
 const Photo = require('../../model/photo');
@@ -55,6 +55,7 @@ const photo = async photoId => {
 
 const photos = async photosId => {
   try {
+    console.log('query photos');
     const photos = await Photo.find({_id: { $in: photosId }});
     return map(photo => {
       return transformPhoto(photo);
@@ -107,7 +108,8 @@ const transformPhoto = async photo => {
 const transformLike = like => {
   return {
     ...like._doc,
-    photo: photosLoader.load(like._doc.photo.toString()),
+    photo: like._doc.photo && photosLoader.load(like._doc.photo.toString()),
+    comment: like._doc.comment && commentsLoader.load(like._doc.comment.toString()),
     user: usersLoader.load(like._doc.user.toString())
   }
 }

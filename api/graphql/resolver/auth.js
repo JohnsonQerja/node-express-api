@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 
 const User = require('../../model/user');
 
+const { transformUser } = require('./merge');
+
 module.exports = {
   signup: async args => {
     try {
@@ -50,6 +52,14 @@ module.exports = {
       }
     } catch (error) {
       throw error
+    }
+  },
+  profile: async args => {
+    try {
+      const profile = await User.findById({_id: args.userId});
+      return transformUser(profile);
+    } catch (error) {
+      throw error;
     }
   }
 }
