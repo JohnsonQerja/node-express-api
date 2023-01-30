@@ -45,7 +45,7 @@ module.exports = {
       if (!checkPassword) {
         throw new Error('Invalid password!');
       }
-      const token = jwt.sign({id: findUser._doc._id, name: findUser._doc.name, email: findUser._doc.email}, process.env.SECRET_TOKEN, {expiresIn: '1h'});
+      const token = jwt.sign({id: findUser._doc._id, name: findUser._doc.name, email: findUser._doc.email}, process.env.SECRET_TOKEN, {expiresIn: '24h'});
       return {
         ...findUser._doc,
         token: token
