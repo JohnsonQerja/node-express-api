@@ -68,5 +68,47 @@ module.exports = {
     } catch (error) {
       throw error;
     }
+  },
+  updatePost: async (args, req) => {
+    if (!req.user) {
+      throw new Error('Unauthorize user!');
+    }
+    try {
+      const findUser = await User.findById(req.user.id);
+      if (!findUser) {
+        throw new Error('User not found!');
+      }
+      const matchOwner = await Photo.findOne({_id: args.updatePostInput.photoId, user: findUser._doc._id});
+      if (!matchOwner) {
+        throw new Error('Can not edit what is not yours!');
+      }
+      const result = await Photo.findOneAndUpdate(
+        {_id: args.updatePostInput.photoId},
+        {$set: {caption: args.updatePostInput.caption}},
+        {new: true}
+      );
+      return transformPhoto(result);
+    } catch (error) {
+      throw (error);
+    }
+  },
+  deletePost: async (args, req) => {
+    if (!req.user) {
+      throw new Error('Unauthorize user!');
+    }
+    try {
+      const findUser = await User.findById(req.user.id);
+      if (!findUser) {
+        throw new Error('User not found!');
+      }
+      const matchOwner = await Photo.findOne({_id: args.photoId, user: findUser._doc._id});
+      if (!matchOwner) {
+        throw new Error('Can not delete what is not yours!');
+      }
+      await Photo.deleteOne({_id: args.photoId});
+      return transformPhoto(matchOwner);
+    } catch (error) {
+      throw (error);
+    }
   }
 }

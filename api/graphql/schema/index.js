@@ -49,6 +49,10 @@ module.exports = buildSchema(`
     imageUrl: String!
     caption: String!
   }
+  input UpdatePostInput {
+    photoId: ID!
+    caption: String!
+  }
   input LikeInput {
     itemId: ID!
     type: String!
@@ -67,6 +71,8 @@ module.exports = buildSchema(`
   type RootMutation {
     signup(userInput: UserInput): Auth!
     post(postInput: PostInput): Photo!
+    updatePost(updatePostInput: UpdatePostInput): Photo!
+    deletePost(photoId: ID!): Photo!
     like(likeInput: LikeInput): Like!
     dislike(likeInput: LikeInput): Like!
     postComment(commentInput: CommentInput): Comment!
