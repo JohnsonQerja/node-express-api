@@ -22,6 +22,10 @@ module.exports = buildSchema(`
     comments: [Comment!]
     created_at: String!
   }
+  type Photos {
+    data: [Photo!]
+    total: Float!
+  }
   type Like {
     _id: ID!
     photo: Photo
@@ -56,8 +60,8 @@ module.exports = buildSchema(`
   type RootQuery {
     signin(email: String!, password: String!): Auth!
     profile(userId: ID!): User!
-    photos: [Photo!]
-    userPhotos(userId: ID!): [Photo!]
+    photos(isAuth: Boolean!, skip: Float, limit: Float): Photos!
+    userPhotos(userId: ID!, skip: Float, limit: Float): Photos!
     photo(photoId: ID!): Photo!
   }
   type RootMutation {
