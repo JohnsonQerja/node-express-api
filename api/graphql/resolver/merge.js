@@ -117,7 +117,7 @@ const transformLike = like => {
 const transformComment = comment => {
   return {
     ...comment._doc,
-    photo: photosLoader.load(comment._doc.photo.toString()),
+    photo: comment._doc.photo ? photosLoader.load(comment._doc.photo.toString()) : null,
     user: usersLoader.load(comment._doc.user.toString()),
     reply: () => commentsLoader.loadMany(comment._doc.reply)
   }
@@ -126,3 +126,4 @@ const transformComment = comment => {
 exports.transformUser = transformUser;
 exports.transformPhoto = transformPhoto;
 exports.transformLike = transformLike;
+exports.transformComment = transformComment;

@@ -2,9 +2,24 @@ const Comment = require('../../model/comment');
 const User = require('../../model/user');
 const Photo = require('../../model/photo');
 
-// const { transformComment } = require('./merge');
+const { transformComment } = require('./merge');
 
 module.exports = {
+  comments: async args => {
+    try {
+      const total = await Comment.countDocuments({photo: args.photoId});
+      const comments = await Comment.find({photo: args.photoId}).skip(args.skip || 0).limit(args.limit || 5);
+      const result = comments.map(comment => {
+        return transformComment(comment);
+      });
+      return {
+        data: [...result],
+        total,
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
   postComment: async (args, req) => {
     if (!req.user) {
       throw new Error('Unauthorize user!');
@@ -35,9 +50,10 @@ module.exports = {
         );
         return response;
       });
-      return {
-        ...result._doc
-      }
+      return transformComment(result);
+      // return {
+      //   ...result._doc
+      // }
     } catch (error) {
       throw error;
     }
@@ -57,7 +73,7 @@ module.exports = {
       }
       const reply = new Comment({
         message: args.commentInput.message,
-        photo: findComment._doc.photo,
+        // photo: findComment._doc.photo,
         user: findUser._doc._id,
         thread: findComment._doc._id,
       });
@@ -73,9 +89,10 @@ module.exports = {
         );
         return response;
       });
-      return {
-        ...result._doc
-      }
+      return transformComment(result);
+      // return {
+      //   ...result._doc
+      // }
     } catch (error) {
       throw error;
     }

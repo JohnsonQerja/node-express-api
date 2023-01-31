@@ -40,6 +40,10 @@ module.exports = buildSchema(`
     reply: [Comment!]
     likes: [Like!]
   }
+  type Comments {
+    data: [Comment!]
+    total: Float!
+  }
   input UserInput {
     name: String!
     email: String!
@@ -67,6 +71,7 @@ module.exports = buildSchema(`
     photos(isAuth: Boolean!, skip: Float, limit: Float): Photos!
     userPhotos(userId: ID!, skip: Float, limit: Float): Photos!
     photo(photoId: ID!): Photo!
+    comments(photoId: ID, skip: Float, limit: Float): Comments!
   }
   type RootMutation {
     signup(userInput: UserInput): Auth!
