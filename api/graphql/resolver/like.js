@@ -33,7 +33,7 @@ module.exports = {
         comment: itemType === 'comment' ? findItem._doc._id : null,
         user: findUser._doc._id
       });
-      await like.save().then(async (response) => {
+      const result = await like.save().then(async (response) => {
         if (itemType === 'photo') {
           await Photo.findOneAndUpdate(
             {_id: findItem._doc._id},
@@ -57,7 +57,7 @@ module.exports = {
         }
         return response;
       });
-      return transformLike(findItem);
+      return transformLike(result);
     } catch (error) {
       throw error;
     }
