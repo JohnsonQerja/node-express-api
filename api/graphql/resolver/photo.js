@@ -6,11 +6,12 @@ const { transformPhoto } = require('./merge');
 module.exports = {
   photos: async (args, req) => {
     try {
-      const filter = req.user ? { user: { $ne: req.user.id } } : null;
+      // const filter = req.user ? { user: { $ne: req.user.id } } : args.exclude ? { _id: { $ne: args.exclude } } : null;
+      const filter = { user: { $ne: req.user ? req.user.id : null }, _id: { $ne: args.exclude || null } };
       const total = await Photo.countDocuments(filter);
       const photos = await Photo.find(filter)
         .skip(args.skip || 0)
-        .limit(args.limit || 10)
+        .limit(args.limit || null)
         .sort({created_at: 'desc'});
       const result = photos.map(photo => {
         return transformPhoto(photo);

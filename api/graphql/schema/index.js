@@ -68,7 +68,7 @@ module.exports = buildSchema(`
   type RootQuery {
     signin(email: String!, password: String!): Auth!
     profile(userId: ID!): User!
-    photos(isAuth: Boolean!, skip: Float, limit: Float): Photos!
+    photos(isAuth: Boolean!, exclude: ID, skip: Float, limit: Float): Photos!
     userPhotos(userId: ID!, skip: Float, limit: Float): Photos!
     photo(photoId: ID!): Photo!
     comments(photoId: ID, skip: Float, limit: Float): Comments!
