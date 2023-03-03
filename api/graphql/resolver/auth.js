@@ -10,6 +10,10 @@ const { transformUser } = require('./merge');
 module.exports = {
   signup: async args => {
     try {
+      const userCount = await User.countDocuments();
+      if (userCount >= 20) {
+        throw new Error('User has reached maximum capacity! Please contact developer for assistance.')
+      }
       const findUser = await User.findOne({email: args.userInput.email});
       if (findUser) {
         throw new Error('Email already in used!');
