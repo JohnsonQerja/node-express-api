@@ -1,2 +1,6 @@
 # node-express-api
-Learn Node Express Rest API
+Backend services for /demo-app
+Demo: https://demo-app-johnsonlin286.vercel.app/
+
+# Tech stack
+Node.js + Express.js + GraphQL & MongoDB
