@@ -44,6 +44,10 @@ module.exports = buildSchema(`
     data: [Comment!]
     total: Float!
   }
+  type Error {
+    message: String!
+  }
+  union AuthResponse = Auth | Error
   input UserInput {
     name: String!
     email: String!
@@ -66,7 +70,7 @@ module.exports = buildSchema(`
     message: String!
   }
   type RootQuery {
-    signin(email: String!, password: String!): Auth!
+    signin(email: String!, password: String!): AuthResponse!
     profile(userId: ID!): User!
     photos(isAuth: Boolean!, exclude: ID, skip: Float, limit: Float): Photos!
     userPhotos(userId: ID!, skip: Float, limit: Float): Photos!
@@ -74,7 +78,7 @@ module.exports = buildSchema(`
     comments(photoId: ID, skip: Float, limit: Float): Comments!
   }
   type RootMutation {
-    signup(userInput: UserInput): Auth!
+    signup(userInput: UserInput): AuthResponse!
     post(postInput: PostInput): Photo!
     updatePost(updatePostInput: UpdatePostInput): Photo!
     deletePost(photoId: ID!): Photo!
