@@ -37,16 +37,12 @@ module.exports = {
       //   { expiresIn: "24h" }
       // );
       return {
-        __typename: "Auth",
         ...result._doc,
         password: null,
         // token: token,
       };
     } catch (error) {
-      return {
-        __typename: "Error",
-        message: error.message,
-      };
+      throw error;
     }
   },
   signin: async (args) => {
@@ -72,15 +68,11 @@ module.exports = {
         { expiresIn: "24h" }
       );
       return {
-        __typename: "Auth",
         ...findUser._doc,
         token: token,
       };
     } catch (error) {
-      return {
-        __typename: "Error",
-        message: error.message,
-      };
+      throw error;
     }
   },
   profile: async (args) => {
