@@ -72,6 +72,7 @@ module.exports = buildSchema(`
     userPhotos(userId: ID!, skip: Float, limit: Float): Photos!
     photo(photoId: ID!): Photo!
     comments(photoId: ID, skip: Float, limit: Float): Comments!
+    authPhotos: Photos!
   }
   type RootMutation {
     signup(userInput: UserInput): Auth!
