@@ -48,7 +48,7 @@ module.exports = {
         // token: token,
       };
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   },
   signin: async (args) => {
@@ -78,7 +78,7 @@ module.exports = {
         token: token,
       };
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   },
   profile: async (args) => {
@@ -86,7 +86,7 @@ module.exports = {
       const profile = await User.findById({ _id: args.userId });
       return transformUser(profile);
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   },
 };

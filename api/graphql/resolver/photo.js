@@ -11,7 +11,9 @@ module.exports = {
         user: { $ne: req.user ? req.user.id : null },
         _id: { $ne: args.exclude || null },
       };
-      const total = await Photo.countDocuments(filter);
+      const total = await Photo.countDocuments({
+        user: { $ne: req.user ? req.user.id : null },
+      });
       const photos = await Photo.find(filter)
         .skip(args.skip || 0)
         .limit(args.limit || null)
@@ -24,7 +26,7 @@ module.exports = {
         total,
       };
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   },
   authPhotos: async (args, req) => {
@@ -42,7 +44,7 @@ module.exports = {
         total,
       };
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   },
   userPhotos: async (args) => {
@@ -60,7 +62,7 @@ module.exports = {
         total,
       };
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   },
   photo: async (args) => {
@@ -68,7 +70,7 @@ module.exports = {
       const data = await Photo.findById(args.photoId);
       return transformPhoto(data);
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   },
   post: async (args, req) => {
@@ -88,7 +90,7 @@ module.exports = {
       const result = await post.save();
       return transformPhoto(result);
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   },
   updatePost: async (args, req) => {
@@ -114,7 +116,7 @@ module.exports = {
       );
       return transformPhoto(result);
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   },
   deletePost: async (args, req) => {
@@ -136,7 +138,7 @@ module.exports = {
       await Photo.deleteOne({ _id: args.photoId });
       return transformPhoto(matchOwner);
     } catch (error) {
-      throw error;
+      throw new Error(error);
     }
   },
 };
