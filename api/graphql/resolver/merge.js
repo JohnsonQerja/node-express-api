@@ -98,6 +98,7 @@ const transformPhoto = async (photo) => {
   return {
     ...photo._doc,
     user: usersLoader.load(photo._doc.user.toString()),
+    // user: user(photo._doc.user._id.toString()),
     likes: () => likesLoader.loadMany(photo._doc.likes),
     comments: () => commentsLoader.loadMany(photo._doc.comments),
     created_at: new Date(photo._doc.created_at).toISOString(),

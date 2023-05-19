@@ -42,6 +42,7 @@ module.exports = buildSchema(`
   }
   type Comments {
     data: [Comment!]
+    photo: Photo!
     total: Float!
   }
   input UserInput {
